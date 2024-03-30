@@ -3,6 +3,7 @@ import { Graph } from "./js/math/graph.js";
 import { log } from "./js/utils/logger.js";
 import { Viewport } from "./js/viewport.js";
 import { World } from "./js/world.js";
+import { scale } from "./js/math/utils.js";
 
 
 const vwCanvas = document.querySelector("#virtualWorldCanvas");
@@ -21,12 +22,18 @@ const world = new World(graph);
 const viewport = new Viewport(vwCanvas)
 const graphEditor = new GraphEditor(viewport, graph);
 
+let oldGraphHash = graph.hash();
 animate()
 
 function animate() {
     viewport.reset();
-    world.generate();
-    world.draw(viewport.ctx);
+    if (graph.hash() !== oldGraphHash) {
+        world.generate();
+        oldGraphHash = graph.hash();
+    }
+    const viewpoint = scale(viewport.getOffset(), -1);
+    world.draw(viewport.ctx, viewpoint);
+    viewport.ctx.globalAlpha = 0.5;
     graphEditor.display();
     requestAnimationFrame(animate);
 }

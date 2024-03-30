@@ -134,7 +134,7 @@ export class GraphEditor {
         this.graph.draw(this.ctx);
         if (this.selectedPoint) {
             const intent = this.hoveredPoint ? this.hoveredPoint : this.mousePoint
-            new Segment(this.selectedPoint, intent).draw(this.ctx, { color: "red", dash: [3, 3] });
+            new Segment(this.selectedPoint, intent).draw(this.ctx, { width: 4, color: "#ff3838", dash: [3, 3] });
             this.selectedPoint.draw(this.ctx, { outline: true });
         }
         if (this.hoveredPoint) {

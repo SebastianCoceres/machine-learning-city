@@ -4,7 +4,7 @@ class Point {
         this.y = y;
     }
 
-    draw(ctx, { size = 14, color = "white", outline = false, fill = false } = {}) {
+    draw(ctx, { size = 14, color = "#202020", outline = false, fill = false } = {}) {
         const rad = size / 2;
         ctx.beginPath();
         ctx.fillStyle = color;

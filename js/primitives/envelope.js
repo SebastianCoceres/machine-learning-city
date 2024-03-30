@@ -31,7 +31,7 @@ export class Envelope {
         return new Polygon(points)
     }
 
-    draw(ctx) {
-        this.poly.draw(ctx)
+    draw(ctx, options) {
+        this.poly.draw(ctx, options)
     }
 }

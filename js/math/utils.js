@@ -19,32 +19,32 @@ export function getNearestPoint(loc, points, threshold = Infinity) {
 }
 
 //? Calcular la distancia perpendicular al segmento entero
-// function perpendicularDistance(loc, s) {
-//     const x1 = s.p1.x;
-//     const y1 = s.p1.y;
-//     const x2 = s.p2.x;
-//     const y2 = s.p2.y;
+export function perpendicularDistance(loc, s) {
+    const x1 = s.p1.x;
+    const y1 = s.p1.y;
+    const x2 = s.p2.x;
+    const y2 = s.p2.y;
 
-//     const numerator = Math.abs((y2 - y1) * loc.x - (x2 - x1) * loc.y + x2 * y1 - y2 * x1);
-//     const denominator = Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+    const numerator = Math.abs((y2 - y1) * loc.x - (x2 - x1) * loc.y + x2 * y1 - y2 * x1);
+    const denominator = Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
 
-//     return numerator / denominator;
-// }
+    return numerator / denominator;
+}
 
-// export function getNearestSegment(loc, segments, threshold = Infinity) {
-//     let nearestSegment = null;
-//     let nearestDistance = Infinity;
+export function getNearestToAllSegment(loc, segments, threshold = Infinity) {
+    let nearestSegment = null;
+    let nearestDistance = Infinity;
 
-//     segments.forEach((s) => {
-//         const dist = perpendicularDistance(loc, s);
-//         if (dist < nearestDistance && dist < threshold) {
-//             nearestDistance = dist;
-//             nearestSegment = s;
-//         }
-//     })
+    segments.forEach((s) => {
+        const dist = perpendicularDistance(loc, s);
+        if (dist < nearestDistance && dist < threshold) {
+            nearestDistance = dist;
+            nearestSegment = s;
+        }
+    })
 
-//     return nearestSegment
-// }
+    return nearestSegment
+}
 
 //? Calcular la distancia al centro del segmento?
 export function getNearestSegment(loc, segments, threshold = Infinity) {
@@ -65,6 +65,16 @@ export function getNearestSegment(loc, segments, threshold = Infinity) {
     return nearestSegment;
 }
 
+
+export function average(p1, p2) {
+    return new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+}
+
+
+export function dot(p1, p2) {
+    return p1.x * p2.x + p1.y * p2.y
+}
+
 export function subtract(p1, p2) {
     return new Point(p1.x - p2.x, p1.y - p2.y);
 }
@@ -75,6 +85,14 @@ export function add(p1, p2) {
 
 export function scale(vp, factor) {
     return new Point(vp.x * factor, vp.y * factor);
+}
+
+export function normalize(p) {
+    return scale(p, 1 / magnitude(p));
+}
+
+export function magnitude(p) {
+    return Math.hypot(p.x, p.y);
 }
 
 export function translate(loc, angle, offset) {
@@ -93,7 +111,8 @@ export function getIntersection(A, B, C, D) {
     const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y);
     const bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
 
-    if (bottom != 0) {
+    const eps = 0.000001;
+    if (Math.abs(bottom) > eps) {
         const t = tTop / bottom;
         const u = uTop / bottom;
         if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
@@ -106,6 +125,23 @@ export function getIntersection(A, B, C, D) {
     }
 }
 
-function lerp(a, b, t) {
+export function lerp(a, b, t) {
     return a * (1 - t) + b * t;
+}
+
+export function lerp2D(a, b, t) {
+    return new Point(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+}
+
+
+export function getRandomColor() {
+    const hue = 290 + Math.random() * 260;
+    return `hsl(${hue}, 100%, 60%)`;
+}
+
+export function getFake3dPoint(point, viewPoint, height) {
+    const dir = normalize(subtract(point, viewPoint));
+    const dist = distance(point, viewPoint);
+    const scaler = Math.atan(dist / 300) / (Math.PI / 2);
+    return add(point, scale(dir, height * scaler));
 }
