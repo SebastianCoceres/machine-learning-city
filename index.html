@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual World</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <h1>Virtual World</h1>
+  <!-- <input type="color"> -->
+  <canvas id="virtualWorldCanvas"></canvas>
+  <div class="drawing-mode">
+    <p>Drawing Mode:</p>
+    <input type="checkbox" id="drawingStatus" />
+    <label for="drawingStatus" class="drawingStatusLabel">Off</label>
+  </div>
+  <div id="controls">
+    <button class="btn btn--green" id="save">Save</button>
+    <button class="btn btn--red" id="reset">Reset</button>
+  </div>
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>

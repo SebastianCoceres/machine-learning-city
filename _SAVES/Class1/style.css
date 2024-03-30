@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: black;
+  text-align: center;
+  position: relative;
+  font-size: 16px;
+}
+
+h1 {
+  color: white;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: .5em;
+}
+
+#virtualWorldCanvas {
+  background-color: #0a0a0a;
+}
+
+#controls {
+  position: fixed;
+  bottom: 1em;
+  left: 1em;
+  right: 1em;
+  padding: 1em;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: .2em;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .2em
+}
+
+.btn {
+  --sat: 98%;
+  --lig: 80%;
+  background: hsl(var(--hue), var(--sat), var(--lig));
+  border: 1px solid hsl(var(--hue), var(--sat), calc(var(--lig) * 0.3));
+  cursor: pointer;
+  color: #404040;
+  font-weight: bold;
+  letter-spacing: .05em;
+  padding: 1em 1.5em;
+  border-radius: .2em;
+}
+
+.btn--yellow {
+  --hue: 46;
+}
+
+.btn--green {
+  --hue: 163;
+}
+
+.btn--purple {
+  --hue: 244;
+}
+
+.btn--red {
+  --hue: 0;
+}
+
+.btn--blue {
+  --hue: 210;
+}
