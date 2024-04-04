@@ -30,7 +30,6 @@ export class Tree {
             const point = lerp2D(this.center, top, t);
             const color = `rgb(30, ${lerp(50, 200, t)}, 70)`;
             const size = lerp(this.size, 80, t)
-            // point.draw(ctx, { size, color });
             const polygon = this.#generateLevel(point, size);
             polygon.draw(ctx, { fill: color, stroke: "rgba(0, 0, 0, 0)" });
         }

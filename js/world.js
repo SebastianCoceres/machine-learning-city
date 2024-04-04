@@ -29,6 +29,8 @@ export class World {
         this.roadBorders = [];
         this.buildings = [];
         this.trees = [];
+        this.laneGuides = [];
+        this.markings = [];
 
         this.generate();
     }
@@ -43,6 +45,9 @@ export class World {
             this.roadBorders = Polygon.union(this.envelopes.map(e => e.poly));
             this.buildings = this.#generateBuildings();
             this.trees = this.#generateTrees();
+
+            this.laneGuides.length = 0;
+            this.laneGuides.push(...this.#generateLaneGuides());
         } else {
             log({ msg: "No segments found" }, "error")
         }
@@ -169,25 +174,49 @@ export class World {
         return trees
     }
 
-    draw(ctx, viewpoint) {
-        for (const envelope of this.envelopes) {
-            envelope.draw(ctx, { fill: "#bbb", stroke: "#bbb", lineWidth: 0.5 });
-        }
-
+    #generateLaneGuides() {
+        const tmpEnvelopes = [];
         for (const seg of this.graph.segments) {
-            seg.draw(ctx, { color: "white", width: 4, dash: [10, 10] });
+            tmpEnvelopes.push(
+                new Envelope(seg, this.roadWidth / 2, this.roadRoundness)
+            )
         }
 
-        for (const seg of this.roadBorders) {
-            seg.draw(ctx, { color: "white", width: 4 });
+        const segments = Polygon.union(tmpEnvelopes.map(e => e.poly));
+        return segments
+    }
+
+    draw(ctx, viewpoint) {
+        if (this.graph.segments.length > 0) {
+            for (const envelope of this.envelopes) {
+                envelope.draw(ctx, { fill: "#bbb", stroke: "#bbb", lineWidth: 0.5 });
+            }
+
+            for (const marking of this.markings) {
+                marking.draw(ctx, { color: "white", width: 4 });
+            }
+
+            for (const seg of this.graph.segments) {
+                seg.draw(ctx, { color: "white", width: 4, dash: [10, 10] });
+            }
+
+            for (const seg of this.roadBorders) {
+                seg.draw(ctx, { color: "white", width: 4 });
+            }
+
+            const items = [...this.buildings, ...this.trees]
+            items.sort((a, b) => {
+                return b.base.distanceToPoint(viewpoint) - a.base.distanceToPoint(viewpoint)
+            })
+            for (const item of items) {
+                item.draw(ctx, viewpoint);
+            }
+        } else {
+            this.buildings.length = 0;
+            this.roadBorders.length = 0;
+            this.trees.length = 0;
+            this.envelopes.length = 0;
         }
 
-        const items = [...this.buildings, ...this.trees]
-        items.sort((a, b) => {
-            return b.base.distanceToPoint(viewpoint) - a.base.distanceToPoint(viewpoint)
-        })
-        for (const item of items) {
-            item.draw(ctx, viewpoint);
-        }
     }
 }

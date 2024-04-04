@@ -47,7 +47,7 @@ export function getNearestToAllSegment(loc, segments, threshold = Infinity) {
 }
 
 //? Calcular la distancia al centro del segmento?
-export function getNearestSegment(loc, segments, threshold = Infinity) {
+export function getNearestSegmentWithCenterPoint(loc, segments, threshold = Infinity) {
     let nearestSegment = null;
     let nearestDistance = Infinity;
 
@@ -63,6 +63,19 @@ export function getNearestSegment(loc, segments, threshold = Infinity) {
     });
 
     return nearestSegment;
+}
+
+export function getNearestSegment(loc, segments, threshold = Infinity) {
+    let nearestSegment = null;
+    let nearestDistance = Infinity;
+    for(const seg of segments) {
+        const dist = seg.distanceToPoint(loc)
+        if (dist < nearestDistance && dist < threshold) {
+            nearestDistance = dist;
+            nearestSegment = seg;
+        }
+    }
+    return nearestSegment
 }
 
 

@@ -1,6 +1,6 @@
-import { getNearestPoint, getNearestSegment } from "./math/utils";
-import { Segment } from "./primitives/segment";
-import { drawingStatus, drawingStatusLabel } from "./elements";
+import { getNearestPoint, getNearestSegmentWithCenterPoint } from "../math/utils";
+import { Segment } from "../primitives/segment";
+import { drawingStatus, drawingStatusLabel } from "../elements";
 
 export class GraphEditor {
     constructor(viewport, graph) {
@@ -20,8 +20,6 @@ export class GraphEditor {
 
         this.dragging = false;
         this.isDrawing = false;
-
-        this.#addEventListeners();
 
     }
 
@@ -83,7 +81,7 @@ export class GraphEditor {
     #handleMouseMove(evt) {
         this.mousePoint = this.viewport.getMouse(evt, true)
         this.hoveredPoint = getNearestPoint(this.mousePoint, this.graph.points, 10 * this.viewport.zoom);
-        this.hoveredSegment = getNearestSegment(this.mousePoint, this.graph.segments, 10 * this.viewport.zoom);
+        this.hoveredSegment = getNearestSegmentWithCenterPoint(this.mousePoint, this.graph.segments, 10 * this.viewport.zoom);
 
         if (this.dragging) {
             this.selectedPoint.x = this.mousePoint.x
@@ -92,11 +90,38 @@ export class GraphEditor {
     }
 
     #addEventListeners() {
-        this.canvas.addEventListener("mousedown", this.#handleMouseDown.bind(this));
-        this.canvas.addEventListener("mousemove", this.#handleMouseMove.bind(this));
-        this.canvas.addEventListener("contextmenu", (evt) => evt.preventDefault())
-        this.canvas.addEventListener("mouseup", () => this.dragging = false)
+        this.boundMouseDown = this.#handleMouseDown.bind(this)
+        this.boundMouseMove = this.#handleMouseMove.bind(this)
+        this.boundMouseUp = () => this.dragging = false
+        this.boundContextMenu = (evt) => evt.preventDefault()
+        this.canvas.addEventListener("mousedown", this.boundMouseDown);
+        this.canvas.addEventListener("mousemove", this.boundMouseMove);
+        this.canvas.addEventListener("mouseup", this.boundMouseUp)
+        this.canvas.addEventListener("contextmenu", this.boundContextMenu)
         document.addEventListener("keyup", (evt) => {
+            if ((evt.ctrlKey || evt.metaKey) && evt.key === 'z') {
+                this.graph.undo();
+                this.#toggleIsDrawing(false)
+                this.selectedPoint = null
+                this.hoveredPoint = null
+                evt.preventDefault();
+            }
+
+            if (evt.key === 'Escape') {
+                this.#toggleIsDrawing(false)
+                this.selectedPoint = null
+                this.hoveredPoint = null
+            }
+        })
+    }
+
+    #removeEventListeners() {
+        this.canvas.removeEventListener("mousedown", this.boundMouseDown);
+        this.canvas.removeEventListener("mousemove", this.boundMouseMove);
+        this.canvas.removeEventListener("mouseup", this.boundMouseUp)
+        this.canvas.removeEventListener("contextmenu", this.boundContextMenu)
+
+        document.removeEventListener("keyup", (evt) => {
             if ((evt.ctrlKey || evt.metaKey) && evt.key === 'z') {
                 this.graph.undo();
                 this.#toggleIsDrawing(false)
@@ -124,6 +149,8 @@ export class GraphEditor {
         this.selectedPoint = null;
         this.hoveredPoint = null;
         this.selectedSegment = null;
+        this.hoveredSegment = null;
+        this.isDrawing = false;
     }
 
     save() {
@@ -145,5 +172,17 @@ export class GraphEditor {
         }
     }
 
+    enable() {
+        this.#addEventListeners();
+    }
+
+    disable() {
+        this.#removeEventListeners();
+        this.selectedPoint = null;
+        this.hoveredPoint = null;
+        this.selectedSegment = null;
+        this.hoveredSegment = null;
+        this.isDrawing = false;
+    }
 }
 
