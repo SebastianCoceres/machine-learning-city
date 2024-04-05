@@ -6,7 +6,7 @@ class Segment {
         this.p2 = p2;
     }
 
-    draw(ctx, { width = 2, color = "#808080", dash = [], gap = 0 } = {}) {
+    draw(ctx, { width = 2, color = "#808080", dash = [], gap = 0, cap = "butt" } = {}) {
         const deltaX = this.p2.x - this.p1.x;
         const deltaY = this.p2.y - this.p1.y;
         const gapX = deltaX * gap;
@@ -20,6 +20,7 @@ class Segment {
         ctx.beginPath();
         ctx.lineWidth = width;
         ctx.strokeStyle = color;
+        ctx.lineCap = cap;
         if (dash.length) {
             ctx.setLineDash(dash);
         }

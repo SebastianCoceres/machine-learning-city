@@ -55,10 +55,12 @@ h1 {
 #drawingStatus {
   display: none;
 }
-#drawingStatus:not(:checked) + .drawingStatusLabel{
+
+#drawingStatus:not(:checked)+.drawingStatusLabel {
   color: #dc1914 !important;
 }
-#drawingStatus:checked + .drawingStatusLabel {
+
+#drawingStatus:checked+.drawingStatusLabel {
   color: #00ffaa !important;
 }
 
@@ -79,7 +81,7 @@ h1 {
   border-radius: .2em;
 }
 
-.btn--neutral{
+.btn--neutral {
   --hue: 0;
   --lig: 20%;
   --sat: 0%;
@@ -107,10 +109,22 @@ h1 {
   --hue: 210;
 }
 
-.btn:hover{
+.btn:hover {
   background: hsl(var(--hue), calc(var(--sat) * 0.8), calc(var(--lig) * 0.8));
 }
 
-.btn.disabled{
+.btn.disabled {
   opacity: .3;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

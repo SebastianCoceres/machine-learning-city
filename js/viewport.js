@@ -1,4 +1,4 @@
-import Point from "./primitives/point";
+import { Point } from "./primitives/index.js";
 import { subtract, add, scale } from "./math/utils";
 
 export class Viewport {

@@ -1,11 +1,12 @@
-import { Envelope } from "./primitives/envelope.js";
-import { Polygon } from "./primitives/polygon.js";
-import { Segment } from "./primitives/segment.js";
-import { Point } from "./primitives/point.js";
-import { Tree } from "./items/tree.js";
-import { Building } from "./items/building.js";
+import {
+    Envelope, Polygon,
+    Segment,
+    Point
+} from "./primitives/index.js";
+import { Building, Tree } from "./items/index.js";
+import { Light } from "./markings/index.js";
 import { log } from "./utils/logger.js";
-import { add, scale, lerp, distance } from "./math/utils.js";
+import { add, scale, lerp, distance, getNearestPoint } from "./math/utils.js";
 
 export class World {
     constructor(
@@ -31,6 +32,8 @@ export class World {
         this.trees = [];
         this.laneGuides = [];
         this.markings = [];
+
+        this.frameCount = 0;
 
         this.generate();
     }
@@ -186,8 +189,69 @@ export class World {
         return segments
     }
 
+    #getIntersections() {
+        const subset = [];
+        for (const point of this.graph.points) {
+            let degree = 0;
+            for (const seg of this.graph.segments) {
+                if (seg.includes(point)) {
+                    degree++;
+                }
+            }
+
+            if (degree > 2) {
+                subset.push(point);
+            }
+        }
+        return subset;
+    }
+
+    #updateLights() {
+        const lights = this.markings.filter((m) => m instanceof Light);
+        const controlCenters = [];
+        for (const light of lights) {
+            const point = getNearestPoint(light.center, this.#getIntersections());
+            let controlCenter = controlCenters.find((c) => c.equals(point));
+            if (!controlCenter) {
+                controlCenter = new Point(point.x, point.y);
+                controlCenter.lights = [light];
+                controlCenters.push(controlCenter);
+            } else {
+                controlCenter.lights.push(light);
+            }
+        }
+        const greenDuration = 2,
+            yellowDuration = 1;
+        for (const center of controlCenters) {
+            center.ticks = center.lights.length * (greenDuration + yellowDuration);
+        }
+        const tick = Math.floor(this.frameCount / 60);
+        for (const center of controlCenters) {
+            const cTick = tick % center.ticks;
+            const greenYellowIndex = Math.floor(
+                cTick / (greenDuration + yellowDuration)
+            );
+            const greenYellowState =
+                cTick % (greenDuration + yellowDuration) < greenDuration
+                    ? "green"
+                    : "yellow";
+            for (let i = 0; i < center.lights.length; i++) {
+                if (i == greenYellowIndex) {
+                    center.lights[i].state = greenYellowState;
+                } else {
+                    center.lights[i].state = "red";
+                }
+            }
+        }
+        this.frameCount++;
+    }
+
+
     draw(ctx, viewpoint) {
         if (this.graph.segments.length > 0) {
+
+            this.#updateLights();
+
             for (const envelope of this.envelopes) {
                 envelope.draw(ctx, { fill: "#bbb", stroke: "#bbb", lineWidth: 0.5 });
             }
@@ -216,6 +280,7 @@ export class World {
             this.roadBorders.length = 0;
             this.trees.length = 0;
             this.envelopes.length = 0;
+            this.markings.length = 0;
         }
 
     }

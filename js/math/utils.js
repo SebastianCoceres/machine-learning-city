@@ -68,7 +68,7 @@ export function getNearestSegmentWithCenterPoint(loc, segments, threshold = Infi
 export function getNearestSegment(loc, segments, threshold = Infinity) {
     let nearestSegment = null;
     let nearestDistance = Infinity;
-    for(const seg of segments) {
+    for (const seg of segments) {
         const dist = seg.distanceToPoint(loc)
         if (dist < nearestDistance && dist < threshold) {
             nearestDistance = dist;
@@ -113,6 +113,10 @@ export function translate(loc, angle, offset) {
         loc.x + Math.cos(angle) * offset,
         loc.y + Math.sin(angle) * offset
     )
+}
+
+export function perpendicular(p) {
+    return new Point(-p.y, p.x);
 }
 
 export function angle(p) {

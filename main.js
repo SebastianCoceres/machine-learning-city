@@ -1,23 +1,33 @@
-import { GraphEditor } from "./js/editors/graphEditor.js";
-import { StopEditor } from "./js/editors/stopEditor.js";
+import {
+    GraphEditor,
+    StopEditor,
+    CrossingEditor,
+    StartEditor,
+    ParkingEditor,
+    LightEditor,
+    TargetEditor,
+    YieldEditor
+} from "./js/editors/index.js";
 import { Graph } from "./js/math/graph.js";
-import { log } from "./js/utils/logger.js";
-import { Viewport } from "./js/viewport.js";
-import { World } from "./js/world.js";
+import { Viewport, World } from "./js/index.js";
 import { scale } from "./js/math/utils.js";
 import {
     resetBtn,
     saveBtn,
     graphModeBtn,
-    stopModeBtn
+    stopModeBtn,
+    crossingModeBtn,
+    startBtn,
+    parkingBtn,
+    targetBtn,
+    yieldBtn,
+    lightBtn
 } from "./js/elements.js";
 
 const vwCanvas = document.querySelector("#virtualWorldCanvas");
 
 vwCanvas.width = window.innerWidth;
 vwCanvas.height = window.innerHeight;
-
-log({ msg: "Canvas size", width: vwCanvas.width, height: vwCanvas.height })
 
 const graphSaved = localStorage.getItem("graph");
 const grapshInfo = graphSaved ? JSON.parse(graphSaved) : null
@@ -26,8 +36,40 @@ const graph = grapshInfo
     : new Graph();
 const world = new World(graph);
 const viewport = new Viewport(vwCanvas)
-const graphEditor = new GraphEditor(viewport, graph);
-const stopEditor = new StopEditor(viewport, world);
+const tools = {
+    graph: {
+        btn: graphModeBtn,
+        editor: new GraphEditor(viewport, graph)
+    },
+    stop: {
+        btn: stopModeBtn,
+        editor: new StopEditor(viewport, world)
+    },
+    crossing: {
+        btn: crossingModeBtn,
+        editor: new CrossingEditor(viewport, world)
+    },
+    start: {
+        btn: startBtn,
+        editor: new StartEditor(viewport, world)
+    },
+    parking: {
+        btn: parkingBtn,
+        editor: new ParkingEditor(viewport, world)
+    },
+    target: {
+        btn: targetBtn,
+        editor: new TargetEditor(viewport, world)
+    },
+    yield: {
+        btn: yieldBtn,
+        editor: new YieldEditor(viewport, world)
+    },
+    light: {
+        btn: lightBtn,
+        editor: new LightEditor(viewport, world)
+    }
+}
 
 let oldGraphHash = graph.hash();
 
@@ -43,44 +85,35 @@ function animate() {
     const viewpoint = scale(viewport.getOffset(), -1);
     world.draw(viewport.ctx, viewpoint);
     viewport.ctx.globalAlpha = 0.5;
-    graphEditor.display();
-    stopEditor.display();
+    for (const tool of Object.keys(tools)) {
+        tools[tool].editor.display();
+    }
     requestAnimationFrame(animate);
 }
 
 function setMode(mode) {
     dissableEditors();
-    switch (mode) {
-        case "graph":
-            graphModeBtn.classList.remove("disabled");
-            graphEditor.enable();
-            break;
-        case "stop":
-            stopModeBtn.classList.remove("disabled");
-            stopEditor.enable();
-            break;
-    }
+    tools[mode].btn.classList.remove("disabled");
+    tools[mode].editor.enable();
 }
 
 function dissableEditors() {
-    graphModeBtn.classList.add("disabled");
-    graphEditor.disable();
-    stopModeBtn.classList.add("disabled");
-    stopEditor.disable();
+    for (const tool of Object.keys(tools)) {
+        tools[tool].btn.classList.add("disabled");
+        tools[tool].editor.disable();
+    }
 }
 
-console.log(world)
-
 resetBtn.addEventListener("click", () => {
-    graphEditor.dispose()
+    tools['graph'].editor.dispose()
     world.markings.length = 0
 })
 saveBtn.addEventListener("click", () => {
-    graphEditor.save()
+    tools['graph'].editor.save()
 })
-graphModeBtn.addEventListener("click", () => {
-    setMode("graph");
-})
-stopModeBtn.addEventListener("click", () => {
-    setMode("stop");
-})
+
+for (const tool of Object.keys(tools)) {
+    tools[tool].btn.addEventListener("click", () => {
+        setMode(tool);
+    })
+}
