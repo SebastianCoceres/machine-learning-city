@@ -2,7 +2,7 @@ import { Point } from "./primitives/index.js";
 import { subtract, add, scale } from "./math/utils";
 
 export class Viewport {
-    constructor(canvas) {
+    constructor(canvas, world) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
 
@@ -12,9 +12,9 @@ export class Viewport {
 
         this.width = canvas.width;
         this.height = canvas.height;
-        this.zoom = 1;
+        this.zoom = world.zoom || 1;
         this.center = new Point(this.width / 2, this.height / 2,);
-        this.offset = scale(this.center, -1);
+        this.offset = world.offset || scale(this.center, -1);
 
         this.drag = {
             start: new Point(0, 0),
@@ -35,7 +35,6 @@ export class Viewport {
         const offset = this.getOffset();
         this.ctx.translate(offset.x, offset.y);
     }
-
 
     getMouse(evt, subtractDragOffset = false) {
         const p = new Point(

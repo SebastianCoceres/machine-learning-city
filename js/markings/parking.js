@@ -1,11 +1,22 @@
 import { angle } from "../math/utils";
 import { Marking } from "./marking";
+import { Point } from "../primitives";
 
 export class Parking extends Marking {
     constructor(center, directionVector, width, height) {
         super(center, directionVector, width, height);
 
         this.borders = [this.poly.segments[0], this.poly.segments[2]];
+        this.type = "parking";
+    }
+
+    static load(info) {
+        return new Parking(
+            Point.load(info.center),
+            Point.load(info.directionVector),
+            info.width,
+            info.height
+        );
     }
 
     draw(ctx) {

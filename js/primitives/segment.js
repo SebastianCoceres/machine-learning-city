@@ -1,9 +1,17 @@
 import { distance, subtract, normalize, dot, scale, magnitude, add } from "../math/utils.js";
+import Point from "./point.js";
 
 class Segment {
     constructor(p1, p2) {
         this.p1 = p1;
         this.p2 = p2;
+    }
+
+    static load(info) {
+        return new Segment(
+            Point.load(info.p1),
+            Point.load(info.p2)
+        );
     }
 
     draw(ctx, { width = 2, color = "#808080", dash = [], gap = 0, cap = "butt" } = {}) {

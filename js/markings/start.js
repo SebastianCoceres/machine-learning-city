@@ -1,11 +1,22 @@
 import { angle } from "../math/utils";
 import { Marking } from "./marking";
+import { Point } from "../primitives";
 
 export class Start extends Marking {
     constructor(center, directionVector, width, height) {
         super(center, directionVector, width, height);
         this.img = new Image();
         this.img.src = "assets/car.png"
+        this.type = "start";
+    }
+
+    static load(info) {
+        return new Start(
+            Point.load(info.center),
+            Point.load(info.directionVector),
+            info.width,
+            info.height
+        );
     }
 
     draw(ctx, options) {

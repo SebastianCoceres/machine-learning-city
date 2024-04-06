@@ -1,6 +1,14 @@
 import { angle, translate } from "../math/utils";
-import { Envelope } from "../primitives/envelope";
-import Segment from "../primitives/segment";
+import { Envelope, Segment } from "../primitives";
+import {
+    Crossing, Light,
+    Stop,
+    Target,
+    Parking,
+    Start,
+    Yield
+} from "./index";
+import { log } from "../utils/logger"
 
 export class Marking {
     constructor(center, directionVector, width, height) {
@@ -15,6 +23,29 @@ export class Marking {
         )
 
         this.poly = new Envelope(this.support, width, 0).poly
+        this.type = "marking";
+    }
+
+    static load(info) {
+        switch (info.type) {
+            case "crossing":
+                return Crossing.load(info);
+            case "light":
+                return Light.load(info);
+            case "stop":
+                return Stop.load(info);
+            case "target":
+                return Target.load(info);
+            case "parking":
+                return Parking.load(info)
+            case "start":
+                return Start.load(info);
+            case "yield":
+                return Yield.load(info);
+            default:
+                log("unknown marking type: " + info.type)
+                return
+        }
     }
 
     draw(ctx, options) {

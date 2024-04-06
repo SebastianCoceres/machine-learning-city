@@ -1,12 +1,24 @@
-import { perpendicular, add, scale, lerp2D} from "../math/utils";
+import { perpendicular, add, scale, lerp2D } from "../math/utils";
 import { Marking } from "./marking";
-import { Segment } from "../primitives/index";
+import { Segment, Point } from "../primitives/index";
+import { log } from "../utils/logger";
 
 export class Light extends Marking {
     constructor(center, directionVector, width, height) {
         super(center, directionVector, width, height / 2);
         this.state = "red";
         this.border = this.poly.segments[0];
+        this.type = "light";
+    }
+
+    static load(info) {
+
+        return new Light(
+            Point.load(info.center),
+            Point.load(info.directionVector),
+            info.width,
+            info.height * 2
+        );
     }
 
     draw(ctx) {

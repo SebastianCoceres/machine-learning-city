@@ -18,21 +18,38 @@
     <label for="drawingStatus" class="drawingStatusLabel">Off</label>
   </div>
   <div id="controls">
-    <div>
-      <button class="btn btn--green" id="save">Save</button>
-      <button class="btn btn--red" id="reset">Reset</button>
+    <div class="controls--save">
+      <p>World</p>
+      <div>
+
+
+        <button class="btn btn--green" id="save">Save</button>
+        <button class="btn btn--red" id="reset">Reset</button>
+        <label class="input--file">
+          <button class="btn btn--yellow">Load</button>
+          <input id="loadWorld" type="file" accept=".world" />
+        </label>
+      </div>
     </div>
-    <div>
-      <button class="btn btn--neutral" id="graphMode" title="Graph Mode"><span class="sr-only">Graph</span> 🌐</button>
-      <button class="btn btn--neutral" id="stopMode" title="Stop Mode"><span class="sr-only">Signs</span> 🛑</button>
-      <button class="btn btn--neutral" id="crossingMode" title="Crossing Mode"><span class="sr-only">Crossing</span>
-        🚶</button>
-      <button class="btn btn--neutral" id="startMode" title="Start Mode"><span class="sr-only">Start</span> 🏁</button>
-      <button class="btn btn--neutral" id="lightMode" title="Light Mode"><span class="sr-only">Light</span> 🚦</button>
-      <button class="btn btn--neutral" id="parkingMode" title="Parking Mode"><span class="sr-only">Parking</span>
-        🅿️</button>
-      <button class="btn btn--neutral" id="targetMode" title="Target Mode"><span class="sr-only">Target</span> 🎯</button>
-      <button class="btn btn--neutral" id="yieldMode" title="Yield Mode"><span class="sr-only">Yield</span> 🛡️</button>
+    <div class="controls--modes">
+      <p>Mode</p>
+      <div>
+        <button class="btn btn--neutral" id="graphMode" title="Graph Mode"><span class="sr-only">Graph</span>
+          🌐</button>
+        <button class="btn btn--neutral" id="stopMode" title="Stop Mode"><span class="sr-only">Signs</span> 🛑</button>
+        <button class="btn btn--neutral" id="crossingMode" title="Crossing Mode"><span class="sr-only">Crossing</span>
+          🚶</button>
+        <button class="btn btn--neutral" id="startMode" title="Start Mode"><span class="sr-only">Start</span>
+          🏁</button>
+        <button class="btn btn--neutral" id="lightMode" title="Light Mode"><span class="sr-only">Light</span>
+          🚦</button>
+        <button class="btn btn--neutral" id="parkingMode" title="Parking Mode"><span class="sr-only">Parking</span>
+          🅿️</button>
+        <button class="btn btn--neutral" id="targetMode" title="Target Mode"><span class="sr-only">Target</span>
+          🎯</button>
+        <button class="btn btn--neutral" id="yieldMode" title="Yield Mode"><span class="sr-only">Yield</span>
+          🛡️</button>
+      </div>
     </div>
   </div>
   <script type="module" src="/main.js"></script>

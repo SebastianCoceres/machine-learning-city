@@ -1,4 +1,4 @@
-import { Polygon } from "../primitives/polygon.js";
+import { Point, Polygon } from "../primitives";
 import { getFake3dPoint, lerp2D, lerp, translate } from "../math/utils.js";
 
 export class Tree {
@@ -7,6 +7,14 @@ export class Tree {
         this.size = size; //size of the base
         this.height = height;
         this.base = this.#generateLevel(center, size)
+    }
+
+    static load(info) {
+        return new Tree(
+            Point.load(info.center),
+            info.size,
+            info.height
+        );
     }
 
     #generateLevel(point, size) {

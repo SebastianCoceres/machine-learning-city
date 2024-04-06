@@ -10,3 +10,4 @@ export const lightBtn = document.querySelector("#lightMode");
 export const parkingBtn = document.querySelector("#parkingMode");
 export const targetBtn = document.querySelector("#targetMode");
 export const yieldBtn = document.querySelector("#yieldMode");
+export const inputFile = document.querySelector("#loadWorld");

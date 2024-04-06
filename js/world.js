@@ -1,12 +1,14 @@
 import {
-    Envelope, Polygon,
+    Envelope,
+    Polygon,
     Segment,
     Point
 } from "./primitives/index.js";
 import { Building, Tree } from "./items/index.js";
-import { Light } from "./markings/index.js";
+import { Light, Marking } from "./markings/index.js";
 import { log } from "./utils/logger.js";
 import { add, scale, lerp, distance, getNearestPoint } from "./math/utils.js";
+import { Graph } from "./math/graph.js";
 
 export class World {
     constructor(
@@ -37,6 +39,29 @@ export class World {
 
         this.generate();
     }
+
+    static load(info) {
+        const world = new World(new Graph());
+        world.graph = Graph.load(info.graph);
+        world.roadWidth = info.roadWidth;
+        world.roadRoundness = info.roadRoundness;
+        world.buildingWidth = info.buildingWidth;
+        world.buildingMinLength = info.buildingMinLength;
+        world.spacing = info.spacing;
+        world.treeSize = info.treeSize;
+
+        world.envelopes = info.envelopes.map(e => Envelope.load(e));
+        world.roadBorders = info.roadBorders.map(b => Segment.load(b));
+        world.buildings = info.buildings.map(b => Building.load(b));
+        world.trees = info.trees.map(t => Tree.load(t));
+        world.laneGuides = info.laneGuides.map(l => Segment.load(l));
+
+        world.markings = info.markings.map(m => Marking.load(m));
+        world.zoom = info.zoom;
+        world.offset = info.offset;
+
+        return world;
+    }
     generate() {
         this.envelopes.length = 0;
         for (const segment of this.graph.segments) {
@@ -52,7 +77,7 @@ export class World {
             this.laneGuides.length = 0;
             this.laneGuides.push(...this.#generateLaneGuides());
         } else {
-            log({ msg: "No segments found" }, "error")
+            log({ msg: "No envelopes found" }, "error")
         }
     }
 
@@ -208,6 +233,7 @@ export class World {
 
     #updateLights() {
         const lights = this.markings.filter((m) => m instanceof Light);
+        if (lights.length < 1) return
         const controlCenters = [];
         for (const light of lights) {
             const point = getNearestPoint(light.center, this.#getIntersections());

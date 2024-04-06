@@ -21,7 +21,8 @@ import {
     parkingBtn,
     targetBtn,
     yieldBtn,
-    lightBtn
+    lightBtn,
+    inputFile
 } from "./js/elements.js";
 
 const vwCanvas = document.querySelector("#virtualWorldCanvas");
@@ -29,13 +30,12 @@ const vwCanvas = document.querySelector("#virtualWorldCanvas");
 vwCanvas.width = window.innerWidth;
 vwCanvas.height = window.innerHeight;
 
-const graphSaved = localStorage.getItem("graph");
-const grapshInfo = graphSaved ? JSON.parse(graphSaved) : null
-const graph = grapshInfo
-    ? Graph.load(grapshInfo)
-    : new Graph();
-const world = new World(graph);
-const viewport = new Viewport(vwCanvas)
+const worldSaved = localStorage.getItem("world");
+const worldInfo = worldSaved ? JSON.parse(worldSaved) : null
+
+let world = worldInfo ? World.load(worldInfo) : new World(new Graph());
+const graph = world.graph;
+const viewport = new Viewport(vwCanvas, world);
 const tools = {
     graph: {
         btn: graphModeBtn,
@@ -104,13 +104,51 @@ function dissableEditors() {
     }
 }
 
+function save() {
+
+    world.zoom = viewport.zoom;
+    world.offset = viewport.offset;
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(world)));
+
+    const date = new Date();
+    const fileName = `World-${date.getDate()}-${date.getMonth()}-${date.getFullYear()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}.world`;
+    element.setAttribute('download', fileName);
+
+    element.click();
+
+    localStorage.setItem("world", JSON.stringify(world));
+}
+
+function load(e) {
+    const file = e.target.files[0];
+    if (!file) {
+        alert("No file selected");
+        return
+    }
+
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function (e) {
+        const json = JSON.parse(e.target.result);
+        console.log(world)
+        world = World.load(json);
+        localStorage.setItem("world", JSON.stringify(world));
+        location.reload();
+    };
+
+}
+
 resetBtn.addEventListener("click", () => {
     tools['graph'].editor.dispose()
     world.markings.length = 0
 })
 saveBtn.addEventListener("click", () => {
-    tools['graph'].editor.save()
+    save()
 })
+
+inputFile.addEventListener("change", load)
+
 
 for (const tool of Object.keys(tools)) {
     tools[tool].btn.addEventListener("click", () => {

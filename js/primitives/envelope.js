@@ -1,10 +1,24 @@
 import { subtract, angle, translate } from "../math/utils";
 import { Polygon } from "../primitives/polygon";
+import Segment from "./segment";
+import Point from "./point";
 
 export class Envelope {
     constructor(skeleton, width, roundness = 1) {
-        this.skeleton = skeleton;
-        this.poly = this.#generatePolygon(width, roundness);
+        if (skeleton) {
+            this.skeleton = skeleton;
+            this.poly = this.#generatePolygon(width, roundness);
+        }
+    }
+
+    static load(info) {
+        const env = new Envelope();
+        env.skeleton = new Segment(
+            new Point(info.skeleton.p1.x, info.skeleton.p1.y),
+            new Point(info.skeleton.p2, info.skeleton.p2.y));
+        env.poly = Polygon.load(info.poly);
+
+        return env
     }
 
     #generatePolygon(width, roundness) {

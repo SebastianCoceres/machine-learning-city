@@ -1,11 +1,21 @@
 import { angle } from "../math/utils";
 import { Marking } from "./marking";
-
+import { Point } from "../primitives";
 export class Yield extends Marking {
     constructor(center, directionVector, width, height) {
         super(center, directionVector, width, height);
 
         this.border = this.poly.segments[2];
+        this.type = "yield";
+    }
+
+    static load(info) {
+        return new Yield(
+            Point.load(info.center),
+            Point.load(info.directionVector),
+            info.width,
+            info.height
+        );
     }
 
     draw(ctx) {
